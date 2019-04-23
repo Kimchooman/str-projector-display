@@ -50,6 +50,10 @@ def chunck_img(dimensions, rgb_points):
 	for chunk_row in range(len(ar)):
 		for chunck_column in range(len(ar[chunck_row])):
 			ar[chunck_row][chunck_column] = mean_rgb_thread(ar[chunck_row][chunck_column])
+			
+	for row in range(len(ar)):
+		for column in range(len(ar[row])):
+			ar[row][column] = mean_rgb_thread(ar[row][column])
 
 	return ar
 
