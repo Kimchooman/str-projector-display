@@ -71,10 +71,6 @@ while True:
 
 	ar = chunck_img(img)
 
-
-	
-
-	print img[10,10], img[10,10][0], img[10,10][1]
 	waitKey(100)
 
 	step += 1
