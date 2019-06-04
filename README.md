@@ -12,4 +12,4 @@
 
 # -Main:
 #  -Compiles fish.py, and cam.py.
-#  -Using multi-threading main.py draws the fish constantly be within a seperate thread checks for people at a set incrememnt using       #     time.sleep(var).
+#  -Using multi-threading main.py draws the fish constantly be within a seperate thread checks for people at a set incrememnt using            time.sleep(var).
