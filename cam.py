@@ -9,8 +9,8 @@ class camera:
 	
 	def __init__(self):
 		self.cam = VideoCapture(0)
-		ret = cam.set(3,420)
-		ret = cam.set(4,240)
+		ret = self.cam.set(3,420)
+		ret = self.cam.set(4,240)
 
 		self.start_time = datetime.now()
 
@@ -39,7 +39,11 @@ class camera:
 			
 			index_of_max = self.max_body_seen(pick) 
 			
-			return pick[index_of_max][0] + pick[index_of_max][2], pick[index_of_max][1] + pick[index_of_max][3]
+			if pick is []:
+				return None
+			else:
+				print(pick)
+				return pick[index_of_max][0] + pick[index_of_max][2], pick[index_of_max][1] + pick[index_of_max][3]
 			
 		else:
 			return -1
