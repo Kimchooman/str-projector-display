@@ -71,7 +71,6 @@ class fish_screen:
 
 	def update_AVOID_POINTS(self, val):
 		if val is not None:
-			print("Nigga spotted", val)
 			val = val // (420/2) # int Divide the camera x pos by half the camera width, i.e: the person is on which half of the camera?
 
 			for entity in entity_ar:
