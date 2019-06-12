@@ -38,7 +38,6 @@ class camera:
 
 	def snap(self):
 		r, image = self.cam.read()
-		print("Snapped")
 
 		if r:
 			image = imutils.resize(image, width=image.shape[1])
