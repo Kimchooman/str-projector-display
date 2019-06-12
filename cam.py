@@ -1,61 +1,50 @@
-from imutils.object_detection import non_max_suppression
-from imutils import paths
-from cv2 import *
-import numpy as np
-import imutils
-from datetime import *
+from cam import *
+from fish import *
+import threading
+import time
 
-class camera:
-	
-	def __init__(self):
-		self.cam = VideoCapture(0)
-		ret = self.cam.set(3,420)
-		ret = self.cam.set(4,240)
+camera = camera()
+fish_screen = fish_screen()
 
-		self.start_time = datetime.now()
+end_time = 15 * 60 * 60 # Ends the program at 15:00 (3:00 pm)
 
-		self.hog = cv2.HOGDescriptor()
-		self.hog.setSVMDetector(cv2.HOGDescriptor_getDefaultPeopleDetector())
+class alarm:
+	def __init__(self,start, time):
+		self.start = start
+		self.end = start + time
 
-	def find_W_H(self,x,y,x1,y1):
-
-		w = x-x1
-		h = y-y1
-		return w, h
-	
-	def max_body_seen(self, pick):
-	
-		max = 0
-		max_w, max_h = self.find_W_H(pick[max][0], pick[max][1], pick[max][2], pick[max][3])
-
-		for i in range(len(pick)):
-			w, h = self.find_W_H(pick[i][0], pick[i][1], pick[i][2], pick[i][3])
-
-			if w * h > max_w * max_h:
-				max = i
+	def check(self):
+		if int(time.time()) >= self.end: return True
 		
-		return max
+		else: return False
 
-	def snap(self):
-		r, image = self.cam.read()
+class compile:
+    def __init__(self):
+        self.alarm = None
 
-		if r:
-			image = imutils.resize(image, width=image.shape[1])
-			rects, weights = self.hog.detectMultiScale(image, winStride=(4, 4), padding=(8, 8), scale=1.05)
+    def session(self):
 
-			rects = np.array([[x, y, x + w, y + h] for (x, y, w, h) in rects])
-			pick = non_max_suppression(rects,probs=None, overlapThresh=0.65)
-			
-			if pick == []:
-				return None
+        while True:
 
-			else:
-				index_of_max = self.max_body_seen(pick) 
-				return pick[index_of_max][0]
+            time.sleep(0.03)
 
-		else:
-			return -1
+            if self.alarm is None:
+                t1 = threading.Thread(target=fish_screen.update_AVOID_POINTS, args=(camera.snap(),))
+                t1.start()
 
-	def end_session(self):
-		print(f"Started at --> {self.start_time} \n Ended at --> {datetime.now()}")
-		self.cam.release()
+                self.alarm = alarm(int(time.time()), 5)
+
+            elif self.alarm is not None:
+                if t1.isAlive() is False: t1.join()
+
+                if self.alarm.check(): self.alarm = None   
+
+            fish_screen.update()
+
+            if int(time.time()) is end_time: 
+                camera.end_session()
+                break
+
+run = compile()
+
+run.session()
