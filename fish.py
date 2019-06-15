@@ -1,6 +1,6 @@
 from pygame.locals import *
-import time
-import math
+from cam import pedestrian_detector
+from sub_modules import *
 import pygame
 import random
 
@@ -8,23 +8,8 @@ entity_ar = []
 WIDTH = 500
 HEIGHT = 500
 
-def distance(x, y, x1, y1):
-	return math.sqrt((x - x1)**2 + (y - y1)**2)
-
-def lerp(p, p1, factor):
-	return ((p1 - p) * factor)
-
-def reverse_lerp(p, p1, factor):
-	return -(factor // (p1-p))
-
-class point:
-	def __init__(self,x,y):
-		self.x = x
-		self.y = y
-
 class entity:
-	def __init__(self, id):
-		self.ID = id
+	def __init__(self):
 		self.pos = point(random.randint(0, WIDTH), random.randint(0, HEIGHT))
 		self.dest = point(random.randint(0, WIDTH),random.randint(0, HEIGHT))
 		self.satisfaction_dist = 50
@@ -58,7 +43,7 @@ class entity:
 
 def gen_entity(count):
 	for num in range(count):
-		fish = entity(num)
+		fish = entity()
 		entity_ar.append(fish)
 
 class fish_screen:
@@ -69,14 +54,15 @@ class fish_screen:
 		self.screen = pygame.display.set_mode((WIDTH, HEIGHT), flags)
 		self.screen.set_alpha(None)
 
-	def update_AVOID_POINTS(self, val):
-		if val is not None:
-			val = val // (420/2) # int Divide the camera x pos by half the camera width, i.e: the person is on which half of the camera?
+	def update_AVOID_POINTS(self, reduced_img):
+		
+		ped = pedestrian_detector(reduced_img)
 
+		if ped.left_sum >= ped.density_thresh and ped.right_sum >= ped.density_thresh:
 			for entity in entity_ar:
-				entity.current_avoid = int(val)
-		else:
+				entity.current_avoid = max(ped.left_sum, ped.right_sum)
 
+		else:
 			for entity in entity_ar:
 				entity.current_avoid = None
 			
