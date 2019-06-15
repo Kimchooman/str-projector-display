@@ -12,7 +12,7 @@ cap = cv2.VideoCapture(0)
 cap.set(3,420)
 cap.set(4,240)
 
-fgbg = cv2.createBackgroundSubtractorMOG2(detectShadows=False)
+fgbg = cv2.createBackgroundSubtractorMOG2(detectShadows=True)
 
 fish_screen = fish_screen()
 
@@ -30,7 +30,7 @@ class compile:
             ret, frame = cap.read()
             fgmask = fgbg.apply(frame)
             
-            cv2.imshow("nig",fgmask)
+            cv2.imshow("cam",fgmask)
             if self.alarm is None:
                 t1 = threading.Thread(target=fish_screen.update_AVOID_POINTS, args=(fgmask,))
                 t1.start()
