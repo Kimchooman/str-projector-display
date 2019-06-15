@@ -26,6 +26,14 @@ def split(array, nrows, ncols):
                  .swapaxes(1, 2)
                  .reshape(-1, nrows, ncols))
 
+def equadistant_point(x, y, x1, y1, factor):
+	""" Return an equadistant point times a factor in the opposite direction."""
+
+	delta_x = x - x1
+	delta_y = y - y1
+
+	return x + delta_x * factor, y - delta_y  * factor
+
 def distance(x, y, x1, y1):
 	return math.sqrt((x - x1)**2 + (y - y1)**2)
 
