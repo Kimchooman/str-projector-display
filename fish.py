@@ -54,6 +54,20 @@ class fish_screen:
 		self.screen = pygame.display.set_mode((WIDTH, HEIGHT), flags)
 		self.screen.set_alpha(None)
 
+	def restrict_pos(self,ar):
+
+		for fish in ar:
+			if fish.pos.x <= -300:
+				fish.pos.x = -300
+			elif fish.pos.x >= WIDTH + 300:
+				fish.pos.x = WIDTH + 300
+			
+			if fish.pos.y <= -300:
+				fish.pos.y = -300
+
+			elif fish.pos.y >= HEIGHT + 300:
+				fish.pos.y = HEIGHT + 300
+
 	def update_AVOID_POINTS(self, reduced_img):
 		
 		ped = pedestrian_detector(reduced_img)
@@ -81,11 +95,15 @@ class fish_screen:
 					fish.move(int(lerp(fish.pos.y, fish.dest.y, fish.speed)), 'y')
 
 				else:
-					fish.move(int(reverse_lerp(fish.pos.x, fish.avoid_ar[fish.current_avoid].x, fish.run_speed)),  "x")
-					fish.move(int(reverse_lerp(fish.pos.y, fish.avoid_ar[fish.current_avoid].y, fish.run_speed)), "y")
+					_x , _y = equadistant_point(fish.pos.x, fish.pos.y, fish.avoid_ar[fish.current_avoid].x, fish.avoid_ar[fish.current_avoid].y , .01)
+
+					fish.move(int(lerp(fish.pos.x, _x, fish.run_speed)),  "x")
+					fish.move(int(lerp(fish.pos.y, _y, fish.run_speed)), "y")
 			else:
 				fish.gen_new_dest()
-			
+		
+		self.restrict_pos(entity_ar)
+
 		for fish in entity_ar:	
 			if fish.current_avoid is not None:
 				pygame.draw.rect(self.screen, (0,255,0),((fish.avoid_ar[fish.current_avoid].x, fish.avoid_ar[fish.current_avoid].y),(10,10)))
